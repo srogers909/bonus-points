@@ -1,0 +1,26 @@
+{
+  "name": "bonus-points",
+  "homepage": "https://github.com/srogers909/bonus-points",
+  "authors": [
+    "Steven Rogers <steven.rogers909@gmail.com>"
+  ],
+  "description": "Ariella's Bonus Points System",
+  "main": "index.html",
+  "keywords": [
+    "Javascript",
+    "Angular",
+    "Bonus",
+    "Points"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "^1.6.1",
+    "angular-ui-router": "^0.4.2",
+    "angular-animate": "^1.6.1",
+    "underscore": "^1.8.3",
+    "bootstrap": "^3.3.7",
+    "animate.css": "^3.5.2",
+    "jshint": "^2.9.4"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "bonus-points",
+  "description": "Ariella's bonus points system",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "browserify": "^14.0.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-jshint": "^2.0.4",
+    "gulp-less": "^3.3.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-sourcemaps": "^2.4.0",
+    "gulp-uglify": "^2.0.1",
+    "gulp-useref": "^3.1.2",
+    "jshint": "^2.9.4",
+    "karma": "^1.4.1",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-spec-reporter": "0.0.26",
+    "run-sequence": "^1.2.2"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srogers909/bonus-points.git"
+  },
+  "keywords": [
+    "Javascript",
+    "Angular",
+    "Bonus",
+    "Points"
+  ],
+  "author": "Steven Rogers <steven.rogers909@gmail.com> (https://github.com/srogers909/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/srogers909/bonus-points/issues"
+  },
+  "homepage": "https://github.com/srogers909/bonus-points#readme"
+}
