@@ -1,17 +1,19 @@
-{
-    'use strict';
+(function() {
+    let componentDefinition = {
+        bindings: {
 
-    let definition = {
-        bindings: {},
-        controller: 'controller',
-        templateUrl: 'app/components/home/home.component.tpl.html'
+        },
+        controller: Controller,
+        templateUrl: 'components/home/home.component.tpl.html'
     };
 
-    let controller = () => {
+    function Controller() {
+        let vm = this;
 
-    };
+        vm.greetings = 'hello world';
+    }
 
     angular
         .module('bonusPoints')
-        .component('homeComponent', definition);
-}
+        .component('homeComponent', componentDefinition);
+}());

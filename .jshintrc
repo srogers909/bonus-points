@@ -1,0 +1,11 @@
+{
+  "undef": true,
+  "unused": true,
+  "esversion": 6,
+  "forin": true,
+  "maxdepth": 2,
+  "quotmark": "single",
+  "globals": {
+    "angular": true
+  }
+}

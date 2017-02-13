@@ -1,14 +1,18 @@
-{
-    'use strict';
-
+(function() {
     angular
         .module('bonusPoints', ['ui.router'])
         .config([
-            '$stateProvider', ($stateProvider) => {
+            '$stateProvider', '$urlRouterProvider', ($stateProvider, $urlRouterProvider) => {
                 $stateProvider
-                    .state({
+                    .state('home', {
                         url: '/',
-                        component: 'homeComponent'
+                        template: '<home-component></home-component>'
+                    })
+                    .state('finances', {
+                        url: '/finances',
+                        template: '<finance-component></finance-component>'
                     });
+
+                $urlRouterProvider.otherwise('/');
             }]);
-}
+}());

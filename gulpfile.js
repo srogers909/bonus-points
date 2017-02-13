@@ -1,57 +1,92 @@
-{
-    'use strict';
-
+(function() {
     // gulp
     const gulp = require('gulp');
 
     // plugins
-    const connect = require('gulp-connect');
-    const jshint = require('gulp-jshint');
-    const uglify = require('gulp-uglify');
-    const minifyCSS = require('gulp-minify-css');
-    const clean = require('gulp-clean');
-    const browserify = require('gulp-browserify');
-    const concat = require('gulp-concat');
-    const runSequence = require('run-sequence');
-    const karma = require('karma').Server;
+    const connect = require('gulp-connect'),
+        useref = require('gulp-useref'),
+        jshint = require('gulp-jshint'),
+        uglify = require('gulp-uglify'),
+        clean = require('gulp-clean'),
+        concat = require('gulp-concat'),
+        browserSync = require('browser-sync').create(),
+        runSequence = require('run-sequence'),
+        pump = require('pump'),
+        templateCache = require('gulp-angular-templatecache'),
+        sourcemaps = require('gulp-sourcemaps'),
+        less = require('gulp-less'),
+        karma = require('karma').Server;
 
     // tasks
-    gulp.task('lint', () => {
-        gulp.src(['./app/**/*.js', '!./app/bower_components/**'])
-            .pipe(jshint())
-            .pipe(jshint.reporter('default'))
-            .pipe(jshint.reporter('fail'));
+    gulp.task('lint', (cb) => {
+        pump([
+            gulp.src(['./app/**/*.js', '!./app/bower_components/**']),
+            jshint(),
+            jshint.reporter('default'),
+            jshint.reporter('fail')
+        ], cb);
     });
 
-    gulp.task('clean', () => {
-        gulp.src('./dist/*').pipe(clean({ force: true }));
-        gulp.src('./app/js/bundled.js').pipe(clean({ force: true }));
+    gulp.task('less', (cb) => {
+        pump([
+            gulp.src('./app/styles/**/*.less'),
+            sourcemaps.init(),
+            less(),
+            sourcemaps.write(),
+            gulp.dest('app/styles'),
+            browserSync.stream()
+        ], cb);
     });
 
-    gulp.task('minify-css', () => {
-        const opts = { comments : true, spare : true };
-        gulp.src(['./app/**/*.css', '!./app/bower_components/**'])
-            .pipe(minifyCSS(opts))
-            .pipe(gulp.dest('./dist/'));
+    gulp.task('clean', (cb) => {
+        pump([
+            gulp.src('./dist/*'),
+            clean({ force: true })
+        ], cb);
     });
 
-    gulp.task('minify-js', () => {
-        gulp.src(['./app/**/*.js', '!./app/bower_components/**'])
-            .pipe(uglify({
-                // inSourceMap:
-                // outSourceMap: "app.js.map"
-            }))
-            .pipe(gulp.dest('./dist/'));
+    gulp.task('browser-sync', () => {
+        browserSync.init({
+            server: {
+                baseDir: './app'
+            }
+        });
     });
 
-    gulp.task('copy-bower-components', () => {
-        gulp.src('./app/bower_components/**')
-            .pipe(gulp.dest('dist/bower_components'));
+    // gulp.task('minify-js', (cb) => {
+    //     pump([
+    //         gulp.src(['./app/**/*.js', '!./app/bower_components/**']),
+    //         uglify({
+    //             outSourceMap: "bonus-points.js.map"
+    //         }),
+    //         gulp.dest('./dist/')
+    //     ], cb);
+    // });
+
+    gulp.task('minify', (cb) => {
+        pump([
+            gulp.src('./app/index.html'),
+            sourcemaps.init(),
+            useref(),
+            sourcemaps.write(),
+            gulp.dest('dist/')
+        ], cb);
     });
 
-    gulp.task('copy-html-files', () => {
-        gulp.src('./app/**/*.html')
-            .pipe(gulp.dest('dist/'));
+    // to be used with merging into one artifact.
+    gulp.task('templates', (cb) => {
+        pump([
+            gulp.src(
+                [
+                    './app/**/*.html',
+                    '!./app/index.html',
+                    '!./app/bower_components/jshint/tests/helpers/browser/index.html'
+                ]),
+            templateCache('templates.js', {
+                module: 'bonusPoints'
+            }),
+            gulp.dest('dist/')
+        ], cb);
     });
 
     gulp.task('connect', () => {
@@ -61,31 +96,11 @@
         });
     });
 
-    gulp.task('connectDist', () => {
+    gulp.task('connect:dist', () => {
         connect.server({
             root: 'dist/',
             port: 9000
         });
-    });
-
-    gulp.task('browserify', () => {
-        gulp.src(['app/js/main.js'])
-            .pipe(browserify({
-                insertGlobals: true,
-                debug: true
-            }))
-            .pipe(concat('bundled.js'))
-            .pipe(gulp.dest('./app/js'));
-    });
-
-    gulp.task('browserifyDist', () => {
-        gulp.src(['app/js/main.js'])
-            .pipe(browserify({
-                insertGlobals: true,
-                debug: true
-            }))
-            .pipe(concat('bundled.js'))
-            .pipe(gulp.dest('./dist/js'));
     });
 
     gulp.task('test', (done) => {
@@ -95,11 +110,9 @@
         }, done).start();
     });
 
-
-
     // *** default task *** //
     gulp.task('default', () => {
-        runSequence(['clean'], ['lint', 'browserify', 'connect']);
+        runSequence(['clean'], ['lint', 'connect']);
     });
 
     // *** build task *** //
@@ -107,13 +120,15 @@
         runSequence(
             ['clean'],
             [
-                'lint',
-                'minify-css',
-                'browserifyDist',
-                'copy-html-files',
-                'copy-bower-components',
-                'connectDist'
+                'lint'
             ]
         );
     });
-}
+
+    gulp.task('serve', ['lint', 'less', 'browser-sync'], () => {
+        gulp.watch([
+            'app/**/*.html',
+            'app/**/*.css'
+        ]).on('change', browserSync.reload);
+    });
+}());
